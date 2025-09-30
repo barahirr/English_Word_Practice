@@ -12,8 +12,8 @@
   .game{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
   .column {
   display: grid;
-  grid-template-columns: repeat(3, 140px);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
   margin: 0;              /* sağ–sol ek boşluğu kapatır */
   margin-bottom: 12px;    /* alta biraz boşluk bırakır */
 }
