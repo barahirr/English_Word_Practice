@@ -41,6 +41,7 @@
 <div class="topbar">
   <label>Kategori:
     <select id="categorySelect">
+	  <option value="Aile">Aile</option>
       <option value="countries">Ülkeler</option>
 	  <option value="People_at_school">Okuldaki İnsanlar</option>
       <option value="school">Okul Kuralları</option>
@@ -70,6 +71,30 @@
 <script>
 /* ===== Kategoriye Göre Kelimeler ===== */
 const WORD_SETS = {
+
+  Aile: [
+  {en:"Mother", tr:"Anne", img:"https://img.icons8.com/fluency/96/mother.png"},
+  {en:"Father", tr:"Baba", img:"https://img.icons8.com/?size=100&id=2K3aCA8MSSKL&format=png&color=000000"},
+  {en:"Sister", tr:"Kız Kardeş", img:"https://img.icons8.com/?size=100&id=PVYFvgPlVSTi&format=png&color=000000"},
+  {en:"Brother", tr:"Erkek Kardeş", img:"https://img.icons8.com/?size=100&id=Pz87K0EGoCcH&format=png&color=000000"},
+  {en:"Grandmother", tr:"Büyükanne", img:"https://img.icons8.com/?size=100&id=118263&format=png&color=000000"},
+  {en:"Grandfather", tr:"Büyükbaba", img:"https://img.icons8.com/?size=100&id=118242&format=png&color=000000"},
+  {en:"Uncle", tr:"Amca / Dayı", img:"https://img.icons8.com/?size=100&id=vWGIHLOdoUCu&format=png&color=000000"},
+  {en:"Aunt", tr:"Teyze / Hala", img:"https://img.icons8.com/?size=100&id=67418&format=png&color=000000"},
+  {en:"Cousin", tr:"Kuzen", img:"https://img.icons8.com/?size=100&id=OYwtttzJwwPM&format=png&color=000000"},
+  {en:"Son", tr:"Oğul", img:"https://img.icons8.com/?size=100&id=80976&format=png&color=000000"},
+  {en:"Daughter", tr:"Kız Evlat", img:"https://img.icons8.com/?size=100&id=Tz7F18r2ScyJ&format=png&color=000000"},
+  {en:"Nephew", tr:"Erkek Yeğen", img:"https://img.icons8.com/?size=100&id=dlxq834FgFbq&format=png&color=000000"},
+  {en:"Niece", tr:"Kız Yeğen", img:"https://img.icons8.com/?size=100&id=yQebeUsniRV6&format=png&color=000000"},
+  {en:"Baby", tr:"Bebek", img:"https://img.icons8.com/fluency/96/baby.png"},
+  {en:"Parents", tr:"Ebeveynler", img:"https://img.icons8.com/?size=100&id=oXRBD7zUrO2g&format=png&color=000000"},
+  {en:"Children", tr:"Çocuklar", img:"https://img.icons8.com/fluency/96/children.png"},
+  {en:"Husband", tr:"Koca", img:"https://img.icons8.com/?size=100&id=0QAG3DFKpzGa&format=png&color=000000"},
+  {en:"Wife", tr:"Eş (Kadın)", img:"https://img.icons8.com/?size=100&id=cTWlDTMm9NfY&format=png&color=000000"},
+  {en:"Family", tr:"Aile", img:"https://img.icons8.com/fluency/96/family.png"}
+],
+
+
   countries: [
     {en:"Argentina", tr:"Arjantin", img:"https://img.icons8.com/color/96/argentina-circular.png"},
     {en:"Australia", tr:"Avustralya", img:"https://img.icons8.com/color/96/australia-circular.png"},
@@ -211,7 +236,7 @@ const WORD_SETS = {
   ]
 };
 
-let currentWords = WORD_SETS.countries; // Başlangıç
+let currentWords = WORD_SETS.Aile; // Başlangıç
 let selected=null,timer=null,timeLeft=0,score=0;
 
 let imagesHidden=false; // 👈 sadece ingilizce kartlar için
