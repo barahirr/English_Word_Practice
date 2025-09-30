@@ -28,6 +28,12 @@
   .card.matched{background:#90ee90;border-color:#2e7d32;color:#1b5e20;cursor:default;box-shadow:none;}
   .card.wrong{background:#f08080 !important;border-color:#c0392b !important;color:#fff;}
   .status{text-align:center;margin-top:18px;font-size:16px;}
+  .scoreboard {
+    width:220px; background:#fff; border:2px solid #aaa; padding:10px;
+    border-radius:10px; font-size:14px; line-height:1.6; margin-top:10px;
+  }
+  .scoreboard h3 { margin:0 0 6px; text-align:center; }
+  .scoreboard .first { font-size:16px; font-weight:bold; }
   @media(max-width:520px){
     .column{grid-template-columns:repeat(2,42vw);}
     .card{width:42vw;height:90px;font-size:14px;}
@@ -63,13 +69,16 @@
   <div id="status" class="status">Puan: 0</div>
 </div>
 
-<div class="game">
-  <div class="column" id="englishCol"></div>
-  <div class="column" id="turkishCol"></div>
+<div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+  <div class="game">
+    <div class="column" id="englishCol"></div>
+    <div class="column" id="turkishCol"></div>
+  </div>
+  <div class="scoreboard" id="scoreBoard"><h3>🏆 Skor Tablosu</h3></div>
 </div>
 
 <script>
-/* ===== Örnek Kelimeler (sadece Aile + Ülkeler demo) ===== */
+/* ===== Kelimeler ===== */
 const WORD_SETS = {
 
   Aile: [
@@ -249,28 +258,44 @@ const WORD_SETS = {
 };
 
 let playerName = prompt("Adınızı giriniz:") || "Misafir";
-let currentWords = WORD_SETS.Aile; // başlangıç
+let wrongWords = [];
+let currentWords = WORD_SETS.Aile;
 let selected=null,timer=null,timeLeft=0,score=0;
 let imagesHidden=false;
-let wrongWords = []; // ✅ yanlış yapılan kelimeler
+let gameStarted=false;
+let selectedCategory="Aile";
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j=Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
-  }
-  return arr;
+/* Skor Kaydetme */
+function saveScore(name, score, category, timeUsed) {
+  let scores = JSON.parse(localStorage.getItem("scores")) || {};
+  if(!scores[category]) scores[category] = [];
+  scores[category].push({name,score,time:timeUsed});
+  scores[category].sort((a,b)=>b.score-a.score);
+  localStorage.setItem("scores", JSON.stringify(scores));
+  showScoreBoard();
 }
 
+/* Skor Tablosu */
+function showScoreBoard() {
+  let scores = JSON.parse(localStorage.getItem("scores")) || {};
+  let list = scores[selectedCategory] || [];
+  let html = "<h3>🏆 Skor Tablosu</h3>";
+  list.slice(0,10).forEach((s,i)=>{
+    let cls = i===0 ? "first" : "";
+    html += `<div class="${cls}">${i+1}. ${s.name}: ${s.score} puan (${s.time} sn)</div>`;
+  });
+  document.getElementById("scoreBoard").innerHTML = html;
+}
+
+/* Yeni Oyun */
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
 function newGame(){
   clearInterval(timer);
-  selected=null;score=0;wrongWords=[];
+  selected=null;score=0;gameStarted=false;wrongWords=[];
   updateStatus();
-
   const engCol=document.getElementById("englishCol");
   const trCol=document.getElementById("turkishCol");
   engCol.innerHTML=""; trCol.innerHTML="";
-
   shuffle([...currentWords]).forEach(w=>{
     const d=document.createElement("div");
     d.className="card";
@@ -280,7 +305,6 @@ function newGame(){
     d.addEventListener("click",()=>selectCard(d));
     engCol.appendChild(d);
   });
-
   shuffle([...currentWords]).forEach(w=>{
     const d=document.createElement("div");
     d.className="card";
@@ -290,39 +314,24 @@ function newGame(){
     d.addEventListener("click",()=>selectCard(d));
     trCol.appendChild(d);
   });
-
   timeLeft=parseInt(document.getElementById("timeSelect").value);
-  if(timeLeft>0){
-    timer=setInterval(()=>{
-      timeLeft--; updateStatus();
-      if(timeLeft<=0){
-        clearInterval(timer); disableAll();
-        setTimeout(()=>alert("⏰ Süre doldu! Puanın: "+score),50);
-      }
-    },1000);
-  }
-
   if (imagesHidden) {
-    document.querySelectorAll("#englishCol .card img").forEach(img=>{
-      img.style.display="none";
-    });
+    document.querySelectorAll("#englishCol .card img").forEach(img=>{img.style.display="none";});
   }
+  showScoreBoard();
 }
+function updateStatus(){const st=document.getElementById("status");st.textContent = timeLeft>0 ? `Süre: ${timeLeft} sn | Puan: ${score}` : `Puan: ${score}`;}
+function disableAll(){document.querySelectorAll(".card").forEach(c=>c.style.pointerEvents="none");}
 
-function updateStatus(){
-  const st=document.getElementById("status");
-  st.textContent = timeLeft>0 ? `Süre: ${timeLeft} sn | Puan: ${score}` : `Puan: ${score}`;
-}
-
-function disableAll(){
-  document.querySelectorAll(".card").forEach(c=>c.style.pointerEvents="none");
-}
-
+/* Kart Seçme */
 function selectCard(card){
-  if(card.dataset.lang==="en"){
-    const u=new SpeechSynthesisUtterance(card.textContent.trim());
-    u.lang="en-US"; speechSynthesis.speak(u);
+  if(!gameStarted){
+    gameStarted=true;
+    if(timeLeft>0){
+      timer=setInterval(()=>{timeLeft--;updateStatus();if(timeLeft<=0){clearInterval(timer);disableAll();alert("⏰ Süre doldu! Puanın: "+score);}},1000);
+    }
   }
+  if(card.dataset.lang==="en"){const u=new SpeechSynthesisUtterance(card.textContent.trim());u.lang="en-US";speechSynthesis.speak(u);}
   if(card.classList.contains("matched")) return;
   if(!selected){ card.classList.add("selected"); selected=card; return; }
   if(card===selected) return;
@@ -331,50 +340,31 @@ function selectCard(card){
     card.classList.add("matched"); selected.classList.add("matched");
     card.classList.remove("selected"); selected.classList.remove("selected");
     score+=10; updateStatus(); selected=null;
-
     if(document.querySelectorAll(".matched").length===currentWords.length*2){
-      clearInterval(timer); score+=50; updateStatus();
-
-      // ✅ oyun bittiğinde hatalı kelimeler varsa
+      clearInterval(timer); let used=parseInt(document.getElementById("timeSelect").value)||"Sınırsız"; score+=50; updateStatus();
+      saveScore(playerName, score, selectedCategory, used);
       if(wrongWords.length>0 && confirm("Yanlış yaptığın kelimelerle tekrar oynamak ister misin?")){
-        currentWords = wrongWords;
-        wrongWords = [];
-        newGame();
-        return;
+        currentWords = wrongWords; wrongWords=[]; newGame(); return;
       }
-
-      setTimeout(()=>alert("🎉 Tebrikler! Toplam Puan: "+score),300);
+      alert("🎉 Tebrikler! Toplam Puan: "+score);
     }
   }else{
-    // ✅ yanlış yapılan kelimeyi kaydet
-    if(card.dataset.lang==="en"){
-      wrongWords.push(currentWords[card.dataset.index]);
-    } else {
-      wrongWords.push(currentWords[selected.dataset.index]);
-    }
-
+    if(card.dataset.lang==="en"){ wrongWords.push(currentWords[card.dataset.index]); }
+    else { wrongWords.push(currentWords[selected.dataset.index]); }
     card.classList.add("wrong"); selected.classList.add("wrong");
     score-=5; updateStatus();
-    setTimeout(()=>{
-      card.classList.remove("wrong","selected");
-      selected.classList.remove("wrong","selected");
-      selected=null;
-    },600);
+    setTimeout(()=>{card.classList.remove("wrong","selected");selected.classList.remove("wrong","selected");selected=null;},600);
   }
 }
 
-/* ===== Olaylar ===== */
+/* Olaylar */
 document.getElementById("newBtn").addEventListener("click", newGame);
 document.getElementById("categorySelect").addEventListener("change",e=>{
-  currentWords = WORD_SETS[e.target.value];
-  newGame();
+  currentWords = WORD_SETS[e.target.value]; selectedCategory=e.target.value; newGame();
 });
 const toggleBtn=document.getElementById("toggleImagesBtn");
-toggleBtn.addEventListener("click",()=>{
-  imagesHidden=!imagesHidden;
-  document.querySelectorAll("#englishCol .card img").forEach(img=>{
-    img.style.display=imagesHidden?"none":"block";
-  });
+toggleBtn.addEventListener("click",()=>{imagesHidden=!imagesHidden;
+  document.querySelectorAll("#englishCol .card img").forEach(img=>{img.style.display=imagesHidden?"none":"block";});
   toggleBtn.textContent=imagesHidden?"Görselleri Göster":"Görselleri Gizle";
 });
 
