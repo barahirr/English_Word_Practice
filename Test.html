@@ -53,6 +53,8 @@
     </select>
   </label>
   <button id="newBtn">Yeni Oyun</button>
+  <button id="toggleImagesBtn">Görselleri Gizle</button>
+
   <div id="status" class="status">Puan: 0</div>
 </div>
 
@@ -307,6 +309,18 @@ function selectCard(card){
 document.getElementById("newBtn").addEventListener("click", newGame);
 document.getElementById("categorySelect").addEventListener("change",e=>{
   currentWords = WORD_SETS[e.target.value];
+  // Görselleri gizle/göster butonu
+const toggleBtn = document.getElementById("toggleImagesBtn");
+let imagesHidden = false;
+
+toggleBtn.addEventListener("click", () => {
+  imagesHidden = !imagesHidden;
+  document.querySelectorAll(".card img").forEach(img => {
+    img.style.display = imagesHidden ? "none" : "block";
+  });
+  toggleBtn.textContent = imagesHidden ? "Görselleri Göster" : "Görselleri Gizle";
+});
+
   newGame();
 });
 
