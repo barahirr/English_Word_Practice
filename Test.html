@@ -247,6 +247,23 @@ const WORD_SETS = {
     {en:"Festival Of Sacrifice (Eid Al-Adha)", tr:"Kurban Bayramı", img:"https://img.icons8.com/fluency/96/sheep.png"}
   ]
 };
+let playerName = prompt("Adınızı giriniz:") || "Misafir";
+function saveScore(name, score) {
+  let scores = JSON.parse(localStorage.getItem("scores")) || {};
+  scores[name] = (scores[name] || 0) + score;
+  localStorage.setItem("scores", JSON.stringify(scores));
+}
+function showScoreBoard() {
+  let scores = JSON.parse(localStorage.getItem("scores")) || {};
+  let board = Object.entries(scores)
+    .map(([name, sc]) => `${name}: ${sc} puan`)
+    .join("\n");
+  if(board) {
+    alert("🏆 Skor Tablosu:\n" + board);
+  } else {
+    alert("Henüz skor kaydı yok.");
+  }
+}
 
 let currentWords = WORD_SETS.Aile; // Başlangıç
 let selected=null,timer=null,timeLeft=0,score=0;
