@@ -215,7 +215,7 @@ const WORD_SETS = {
 
 let currentWords = WORD_SETS.countries; // başlangıç
 let selected=null,timer=null,timeLeft=0,score=0;
-let imagesHidden=false; // 👈 yeni eklendi
+let imagesHidden=false; // 👈 sadece ingilizce kartlar için
 
 function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){
@@ -265,9 +265,9 @@ function newGame(){
     },1000);
   }
 
-  // 👇 Görseller gizliyse yeni oyunda da gizli kalsın
+  // 👇 İngilizce kart görselleri gizliyse yeni oyunda da gizli kalsın
   if (imagesHidden) {
-    document.querySelectorAll(".card img").forEach(img=>{
+    document.querySelectorAll("#englishCol .card img").forEach(img=>{
       img.style.display="none";
     });
   }
@@ -317,11 +317,11 @@ document.getElementById("categorySelect").addEventListener("change",e=>{
   newGame();
 });
 
-// 👇 Görselleri gizle/göster butonu
+// 👇 Görselleri gizle/göster butonu (sadece sol taraf)
 const toggleBtn=document.getElementById("toggleImagesBtn");
 toggleBtn.addEventListener("click",()=>{
   imagesHidden=!imagesHidden;
-  document.querySelectorAll(".card img").forEach(img=>{
+  document.querySelectorAll("#englishCol .card img").forEach(img=>{
     img.style.display=imagesHidden?"none":"block";
   });
   toggleBtn.textContent=imagesHidden?"Görselleri Göster":"Görselleri Gizle";
