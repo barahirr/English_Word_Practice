@@ -60,6 +60,7 @@
   </label>
   <button id="newBtn">Yeni Oyun</button>
   <button id="toggleImagesBtn">Görselleri Gizle</button>
+  <button onclick="showScoreBoard()">Skor Tablosu</button>
   <div id="status" class="status">Puan: 0</div>
 </div>
 
@@ -350,6 +351,7 @@ function selectCard(card){
     score+=10; updateStatus(); selected=null;
     if(document.querySelectorAll(".matched").length===currentWords.length*2){
       clearInterval(timer); score+=50; updateStatus();
+	saveScore(playerName, score);
       setTimeout(()=>alert("🎉 Tebrikler! Toplam Puan: "+score),300);
     }
   }else{
