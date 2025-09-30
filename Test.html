@@ -41,8 +41,6 @@
 	  <option value="Okuldaki_Yerler">Okuldaki Yerler</option>
 	  <option value="Okul_Klübü">Okul Klübü</option>
 	  <option value="Resmi_Tatiller">Resmi Tatiller</option>
-	  
-	  
     </select>
   </label>
   <label>Süre:
@@ -54,7 +52,6 @@
   </label>
   <button id="newBtn">Yeni Oyun</button>
   <button id="toggleImagesBtn">Görselleri Gizle</button>
-
   <div id="status" class="status">Puan: 0</div>
 </div>
 
@@ -218,6 +215,7 @@ const WORD_SETS = {
 
 let currentWords = WORD_SETS.countries; // başlangıç
 let selected=null,timer=null,timeLeft=0,score=0;
+let imagesHidden=false; // 👈 yeni eklendi
 
 function shuffle(arr){
   for(let i=arr.length-1;i>0;i--){
@@ -266,6 +264,13 @@ function newGame(){
       }
     },1000);
   }
+
+  // 👇 Görseller gizliyse yeni oyunda da gizli kalsın
+  if (imagesHidden) {
+    document.querySelectorAll(".card img").forEach(img=>{
+      img.style.display="none";
+    });
+  }
 }
 
 function updateStatus(){
@@ -309,19 +314,17 @@ function selectCard(card){
 document.getElementById("newBtn").addEventListener("click", newGame);
 document.getElementById("categorySelect").addEventListener("change",e=>{
   currentWords = WORD_SETS[e.target.value];
-  // Görselleri gizle/göster butonu
-const toggleBtn = document.getElementById("toggleImagesBtn");
-let imagesHidden = false;
-
-toggleBtn.addEventListener("click", () => {
-  imagesHidden = !imagesHidden;
-  document.querySelectorAll(".card img").forEach(img => {
-    img.style.display = imagesHidden ? "none" : "block";
-  });
-  toggleBtn.textContent = imagesHidden ? "Görselleri Göster" : "Görselleri Gizle";
+  newGame();
 });
 
-  newGame();
+// 👇 Görselleri gizle/göster butonu
+const toggleBtn=document.getElementById("toggleImagesBtn");
+toggleBtn.addEventListener("click",()=>{
+  imagesHidden=!imagesHidden;
+  document.querySelectorAll(".card img").forEach(img=>{
+    img.style.display=imagesHidden?"none":"block";
+  });
+  toggleBtn.textContent=imagesHidden?"Görselleri Göster":"Görselleri Gizle";
 });
 
 /* İlk açılış */
