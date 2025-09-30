@@ -28,30 +28,13 @@
   .card.matched{background:#90ee90;border-color:#2e7d32;color:#1b5e20;cursor:default;box-shadow:none;}
   .card.wrong{background:#f08080 !important;border-color:#c0392b !important;color:#fff;}
   .status{text-align:center;margin-top:18px;font-size:16px;}
+  .scoreboard{margin-top:20px;text-align:center;}
+  .scoreboard h2{margin-bottom:10px;}
+  .scoreboard ul{list-style:none;padding:0;}
+  .scoreboard li{margin:4px 0;}
   @media(max-width:520px){
     .column{grid-template-columns:repeat(2,42vw);}
     .card{width:42vw;height:90px;font-size:14px;}
-  }
-  /* Skor tablosu kutusu */
-  #scoreBoardBox {
-    position:absolute; 
-    left:20px; 
-    top:120px; 
-    width:200px; 
-    border:2px solid orange; 
-    padding:8px; 
-    background:#fff;
-  }
-  #scoreBoardBox h3 {
-    color:darkorange; 
-    font-size:16px; 
-    text-align:center; 
-    margin:4px 0 8px 0;
-  }
-  #scoreList {
-    padding-left:20px; 
-    font-size:14px; 
-    color:#333;
   }
 </style>
 </head>
@@ -62,14 +45,14 @@
 <div class="topbar">
   <label>Kategori:
     <select id="categorySelect">
-      <option value="Aile">Aile</option>
+	  <option value="Aile">Aile</option>
       <option value="countries">Ülkeler</option>
-      <option value="People_at_school">Okuldaki İnsanlar</option>
+	  <option value="People_at_school">Okuldaki İnsanlar</option>
       <option value="school">Okul Kuralları</option>
-      <option value="Önemli_Kelimeler">Önemli Kelimeler</option>
-      <option value="Okuldaki_Yerler">Okuldaki Yerler</option>
-      <option value="Okul_Klübü">Okul Klübü</option>
-      <option value="Resmi_Tatiller">Resmi Tatiller</option>
+	  <option value="Önemli_Kelimeler">Önemli Kelimeler</option>
+	  <option value="Okuldaki_Yerler">Okuldaki Yerler</option>
+	  <option value="Okul_Klübü">Okul Klübü</option>
+	  <option value="Resmi_Tatiller">Resmi Tatiller</option>
     </select>
   </label>
   <label>Süre:
@@ -84,15 +67,14 @@
   <div id="status" class="status">Puan: 0</div>
 </div>
 
-<!-- Skor tablosu kutusu -->
-<div id="scoreBoardBox">
-  <h3>Skor Tablosu</h3>
-  <ol id="scoreList"></ol>
-</div>
-
 <div class="game">
   <div class="column" id="englishCol"></div>
   <div class="column" id="turkishCol"></div>
+</div>
+
+<div class="scoreboard">
+  <h2>🏆 Skor Tablosu</h2>
+  <ul id="scoreList"><li>Henüz skor yok.</li></ul>
 </div>
 
 <script>
@@ -276,24 +258,37 @@ const WORD_SETS = {
 };
 
 let playerName = prompt("Adınızı giriniz:") || "Misafir";
-function saveScore(name, score) {
+
+function saveScore(category, name, score, timeUsed) {
   let scores = JSON.parse(localStorage.getItem("scores")) || {};
-  scores[name] = (scores[name] || 0) + score;
+  if(!scores[category]) scores[category] = [];
+  scores[category].push({ name, score, time: timeUsed });
   localStorage.setItem("scores", JSON.stringify(scores));
 }
+
 function updateScoreBoard() {
   let scores = JSON.parse(localStorage.getItem("scores")) || {};
+  let category = document.getElementById("categorySelect").value;
   let list = document.getElementById("scoreList");
   list.innerHTML = "";
-  let sorted = Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-  sorted.forEach(([name, sc])=>{
+
+  if(!scores[category] || scores[category].length === 0) {
     let li = document.createElement("li");
-    li.textContent = `${name}: ${sc} puan`;
+    li.textContent = "Henüz skor yok.";
+    list.appendChild(li);
+    return;
+  }
+
+  let sorted = scores[category].sort((a,b)=>b.score-a.score);
+
+  sorted.forEach(s=>{
+    let li = document.createElement("li");
+    li.textContent = `${s.name}: ${s.score} puan (${s.time} sn)`;
     list.appendChild(li);
   });
 }
 
-let currentWords = WORD_SETS.Aile; // Başlangıç
+let currentWords = WORD_SETS.Aile;
 let selected=null,timer=null,timeLeft=0,score=0;
 let imagesHidden=false;
 
@@ -376,8 +371,12 @@ function selectCard(card){
     score+=10; updateStatus(); selected=null;
     if(document.querySelectorAll(".matched").length===currentWords.length*2){
       clearInterval(timer); score+=50; updateStatus();
-      saveScore(playerName, score);
+
+      let timeSet = parseInt(document.getElementById("timeSelect").value) || 0;
+      let timeUsed = timeSet ? (timeSet - timeLeft) : "Sınırsız";
+      saveScore(document.getElementById("categorySelect").value, playerName, score, timeUsed);
       updateScoreBoard();
+
       setTimeout(()=>alert("🎉 Tebrikler! Toplam Puan: "+score),300);
     }
   }else{
@@ -391,11 +390,14 @@ function selectCard(card){
   }
 }
 
+/* ===== Olaylar ===== */
 document.getElementById("newBtn").addEventListener("click", newGame);
 document.getElementById("categorySelect").addEventListener("change",e=>{
   currentWords = WORD_SETS[e.target.value];
   newGame();
+  updateScoreBoard();
 });
+
 const toggleBtn=document.getElementById("toggleImagesBtn");
 toggleBtn.addEventListener("click",()=>{
   imagesHidden=!imagesHidden;
