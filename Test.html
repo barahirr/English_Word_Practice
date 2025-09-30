@@ -2,65 +2,14 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8" />
-<title>Kategorili Kelime Eşleştirme Oyunu V.1.2</title>
+<title>Kategorili Kelime Eşleştirme Oyunu</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f4f7fb;
-    margin: 0;
-    padding: 20px;
-  }
-  h1 {
-    text-align: center;
-    margin: 6px 0 16px;
-  }
-  .topbar {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-  select, button {
-    padding: 8px 12px;
-    font-size: 15px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background: #fff;
-  }
-  .game {
-    display: flex;
-    gap: 40px;
-    justify-content: center;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-  }
-  .scoreboard {
-    width: 220px; /* biraz genişlettim */
-    background: #fff;
-    border: 2px solid #ccc;
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 14px;
-  }
-  .scoreboard h2 {
-    font-size: 16px;
-    margin: 0 0 8px;
-    text-align: center;
-  }
-  .scoreboard ul {
-    padding-left: 16px;
-    margin: 0;
-  }
-  .scoreboard li {
-    margin-bottom: 6px;
-  }
-  .scoreboard li.first {
-    font-weight: bold;
-    font-size: 16px; /* 2 punto büyük */
-    color: #2e7d32; /* biraz vurgulu renk */
-  }
+  body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:20px;}
+  h1{text-align:center;margin:6px 0 16px;}
+  .topbar{display:flex;justify-content:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  select,button{padding:8px 12px;font-size:15px;border-radius:6px;border:1px solid #ccc;background:#fff;}
+  .game{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
   .column {
     display: grid;
     grid-template-columns: repeat(3, 160px);
@@ -69,44 +18,19 @@
     margin-bottom: 12px;
     justify-content: center;
   }
-  .card {
-    height: 100px;
-    width: 140px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: #fff8dc;
-    border: 2px solid #d4a017;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.18s;
-    text-align: center;
-    padding: 6px;
-    user-select: none;
+  .card{
+    height:100px;width:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:#fff8dc;border:2px solid #d4a017;border-radius:10px;cursor:pointer;font-weight:bold;
+    transition:0.18s;text-align:center;padding:6px;user-select:none;
   }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-  }
-  .card.selected { background: #add8e6; border-color: #4682b4; }
-  .card.matched { background: #90ee90; border-color: #2e7d32; color: #1b5e20; cursor: default; box-shadow: none; }
-  .card.wrong { background: #f08080 !important; border-color: #c0392b !important; color: #fff; }
-  .status {
-    text-align: center;
-    margin-top: 18px;
-    font-size: 16px;
-  }
-  @media(max-width:520px) {
-    .game { flex-wrap: wrap; }
-    .column { grid-template-columns: repeat(2, 42vw); }
-    .card { width: 42vw; height: 90px; font-size: 14px; }
-    .scoreboard {
-      width: 100%;
-      order: -1;
-      margin-bottom: 12px;
-    }
+  .card:hover{transform:translateY(-4px);box-shadow:0 6px 14px rgba(0,0,0,0.08);}
+  .card.selected{background:#add8e6;border-color:#4682b4;}
+  .card.matched{background:#90ee90;border-color:#2e7d32;color:#1b5e20;cursor:default;box-shadow:none;}
+  .card.wrong{background:#f08080 !important;border-color:#c0392b !important;color:#fff;}
+  .status{text-align:center;margin-top:18px;font-size:16px;}
+  @media(max-width:520px){
+    .column{grid-template-columns:repeat(2,42vw);}
+    .card{width:42vw;height:90px;font-size:14px;}
   }
 </style>
 </head>
@@ -127,22 +51,25 @@
       <option value="Resmi_Tatiller">Resmi Tatiller</option>
     </select>
   </label>
+  <label>Süre:
+    <select id="timeSelect">
+      <option value="0">Sınırsız</option>
+      <option value="30">30 sn</option>
+      <option value="60">60 sn</option>
+    </select>
+  </label>
   <button id="newBtn">Yeni Oyun</button>
   <button id="toggleImagesBtn">Görselleri Gizle</button>
-  <div id="status" class="status">Süre: 0 sn | Puan: 0</div>
+  <div id="status" class="status">Puan: 0</div>
 </div>
 
 <div class="game">
-  <div class="scoreboard">
-    <h2>🏆 Skor Tablosu</h2>
-    <ul id="scoreList"><li>Henüz skor yok.</li></ul>
-  </div>
   <div class="column" id="englishCol"></div>
   <div class="column" id="turkishCol"></div>
 </div>
 
 <script>
-/* ===== Kategoriye Göre Kelimeler ===== */
+/* ===== Örnek Kelimeler (sadece Aile + Ülkeler demo) ===== */
 const WORD_SETS = {
 
   Aile: [
@@ -322,177 +249,137 @@ const WORD_SETS = {
 };
 
 let playerName = prompt("Adınızı giriniz:") || "Misafir";
-let currentCategory = document.getElementById("categorySelect").value;
-let currentWords = WORD_SETS[currentCategory];
-let selected = null;
-let timer = null;
-let elapsedTime = 0;
-let score = 0;
-let gameStarted = false;
-let imagesHidden = false;
+let currentWords = WORD_SETS.Aile; // başlangıç
+let selected=null,timer=null,timeLeft=0,score=0;
+let imagesHidden=false;
+let wrongWords = []; // ✅ yanlış yapılan kelimeler
 
-function saveScore(name, score, category, timeUsed) {
-  let scores = JSON.parse(localStorage.getItem("scores")) || {};
-  if (!scores[category]) scores[category] = [];
-  scores[category].push({ name, score, time: timeUsed });
-  localStorage.setItem("scores", JSON.stringify(scores));
-  showScoreBoard(category);
-}
-
-function showScoreBoard(category) {
-  let scores = JSON.parse(localStorage.getItem("scores")) || {};
-  let list = document.getElementById("scoreList");
-  list.innerHTML = "";
-  if (scores[category] && scores[category].length > 0) {
-    let sorted = scores[category].sort((a,b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      // Eğer puan eşitse, az süreli olanı öne geçir
-      return a.time - b.time;
-    });
-    // En fazla ilk 3
-    sorted.slice(0,3).forEach((s, idx) => {
-      let li = document.createElement("li");
-      li.textContent = `${idx+1}. ${s.name}: ${s.score} puan (${s.time} sn)`;
-      if (idx === 0) li.classList.add("first");
-      list.appendChild(li);
-    });
-  } else {
-    list.innerHTML = "<li>Henüz skor yok.</li>";
-  }
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
   }
   return arr;
 }
 
-function newGame() {
+function newGame(){
   clearInterval(timer);
-  selected = null;
-  score = 0;
-  elapsedTime = 0;
-  gameStarted = false;
+  selected=null;score=0;wrongWords=[];
   updateStatus();
 
-  currentCategory = document.getElementById("categorySelect").value;
-  currentWords = WORD_SETS[currentCategory];
+  const engCol=document.getElementById("englishCol");
+  const trCol=document.getElementById("turkishCol");
+  engCol.innerHTML=""; trCol.innerHTML="";
 
-  const engCol = document.getElementById("englishCol");
-  const trCol = document.getElementById("turkishCol");
-  engCol.innerHTML = "";
-  trCol.innerHTML = "";
-
-  shuffle([...currentWords]).forEach(w => {
-    const d = document.createElement("div");
-    d.className = "card";
-    d.innerHTML = `<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.en}</div>`;
-    d.dataset.index = currentWords.findIndex(x => x.en === w.en);
-    d.dataset.lang = "en";
-    d.addEventListener("click", () => selectCard(d));
+  shuffle([...currentWords]).forEach(w=>{
+    const d=document.createElement("div");
+    d.className="card";
+    d.innerHTML=`<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.en}</div>`;
+    d.dataset.index=currentWords.findIndex(x=>x.en===w.en);
+    d.dataset.lang="en";
+    d.addEventListener("click",()=>selectCard(d));
     engCol.appendChild(d);
   });
 
-  shuffle([...currentWords]).forEach(w => {
-    const d = document.createElement("div");
-    d.className = "card";
-    d.innerHTML = `<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.tr}</div>`;
-    d.dataset.index = currentWords.findIndex(x => x.tr === w.tr);
-    d.dataset.lang = "tr";
-    d.addEventListener("click", () => selectCard(d));
+  shuffle([...currentWords]).forEach(w=>{
+    const d=document.createElement("div");
+    d.className="card";
+    d.innerHTML=`<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.tr}</div>`;
+    d.dataset.index=currentWords.findIndex(x=>x.tr===w.tr);
+    d.dataset.lang="tr";
+    d.addEventListener("click",()=>selectCard(d));
     trCol.appendChild(d);
   });
 
+  timeLeft=parseInt(document.getElementById("timeSelect").value);
+  if(timeLeft>0){
+    timer=setInterval(()=>{
+      timeLeft--; updateStatus();
+      if(timeLeft<=0){
+        clearInterval(timer); disableAll();
+        setTimeout(()=>alert("⏰ Süre doldu! Puanın: "+score),50);
+      }
+    },1000);
+  }
+
   if (imagesHidden) {
-    document.querySelectorAll("#englishCol .card img").forEach(img => {
-      img.style.display = "none";
+    document.querySelectorAll("#englishCol .card img").forEach(img=>{
+      img.style.display="none";
     });
   }
-
-  showScoreBoard(currentCategory);
 }
 
-function updateStatus() {
-  const st = document.getElementById("status");
-  st.textContent = `Süre: ${elapsedTime} sn | Puan: ${score}`;
+function updateStatus(){
+  const st=document.getElementById("status");
+  st.textContent = timeLeft>0 ? `Süre: ${timeLeft} sn | Puan: ${score}` : `Puan: ${score}`;
 }
 
-function disableAll() {
-  document.querySelectorAll(".card").forEach(c => c.style.pointerEvents = "none");
+function disableAll(){
+  document.querySelectorAll(".card").forEach(c=>c.style.pointerEvents="none");
 }
 
-function selectCard(card) {
-  if (!gameStarted) {
-    gameStarted = true;
-    timer = setInterval(() => {
-      elapsedTime++;
-      updateStatus();
-    }, 1000);
+function selectCard(card){
+  if(card.dataset.lang==="en"){
+    const u=new SpeechSynthesisUtterance(card.textContent.trim());
+    u.lang="en-US"; speechSynthesis.speak(u);
   }
+  if(card.classList.contains("matched")) return;
+  if(!selected){ card.classList.add("selected"); selected=card; return; }
+  if(card===selected) return;
 
-  if (card.dataset.lang === "en") {
-    const u = new SpeechSynthesisUtterance(card.textContent.trim());
-    u.lang = "en-US";
-    speechSynthesis.speak(u);
-  }
-  if (card.classList.contains("matched")) return;
-  if (!selected) {
-    card.classList.add("selected");
-    selected = card;
-    return;
-  }
-  if (card === selected) return;
+  if(card.dataset.index===selected.dataset.index && card.dataset.lang!==selected.dataset.lang){
+    card.classList.add("matched"); selected.classList.add("matched");
+    card.classList.remove("selected"); selected.classList.remove("selected");
+    score+=10; updateStatus(); selected=null;
 
-  if (card.dataset.index === selected.dataset.index && card.dataset.lang !== selected.dataset.lang) {
-    card.classList.add("matched");
-    selected.classList.add("matched");
-    card.classList.remove("selected");
-    selected.classList.remove("selected");
-    score += 10;
-    updateStatus();
-    selected = null;
+    if(document.querySelectorAll(".matched").length===currentWords.length*2){
+      clearInterval(timer); score+=50; updateStatus();
 
-    if (document.querySelectorAll(".matched").length === currentWords.length * 2) {
-      clearInterval(timer);
-      // bonus puan
-      score += 50;
-      updateStatus();
-      saveScore(playerName, score, currentCategory, elapsedTime);
-      setTimeout(() => alert("🎉 Tebrikler! Toplam Puan: " + score), 300);
+      // ✅ oyun bittiğinde hatalı kelimeler varsa
+      if(wrongWords.length>0 && confirm("Yanlış yaptığın kelimelerle tekrar oynamak ister misin?")){
+        currentWords = wrongWords;
+        wrongWords = [];
+        newGame();
+        return;
+      }
+
+      setTimeout(()=>alert("🎉 Tebrikler! Toplam Puan: "+score),300);
     }
-  } else {
-    card.classList.add("wrong");
-    selected.classList.add("wrong");
-    score -= 5;
-    updateStatus();
-    setTimeout(() => {
-      card.classList.remove("wrong", "selected");
-      selected.classList.remove("wrong", "selected");
-      selected = null;
-    }, 600);
+  }else{
+    // ✅ yanlış yapılan kelimeyi kaydet
+    if(card.dataset.lang==="en"){
+      wrongWords.push(currentWords[card.dataset.index]);
+    } else {
+      wrongWords.push(currentWords[selected.dataset.index]);
+    }
+
+    card.classList.add("wrong"); selected.classList.add("wrong");
+    score-=5; updateStatus();
+    setTimeout(()=>{
+      card.classList.remove("wrong","selected");
+      selected.classList.remove("wrong","selected");
+      selected=null;
+    },600);
   }
 }
 
+/* ===== Olaylar ===== */
 document.getElementById("newBtn").addEventListener("click", newGame);
-document.getElementById("categorySelect").addEventListener("change", e => {
-  currentCategory = e.target.value;
+document.getElementById("categorySelect").addEventListener("change",e=>{
+  currentWords = WORD_SETS[e.target.value];
   newGame();
 });
-
-const toggleBtn = document.getElementById("toggleImagesBtn");
-toggleBtn.addEventListener("click", () => {
-  imagesHidden = !imagesHidden;
-  document.querySelectorAll("#englishCol .card img").forEach(img => {
-    img.style.display = imagesHidden ? "none" : "block";
+const toggleBtn=document.getElementById("toggleImagesBtn");
+toggleBtn.addEventListener("click",()=>{
+  imagesHidden=!imagesHidden;
+  document.querySelectorAll("#englishCol .card img").forEach(img=>{
+    img.style.display=imagesHidden?"none":"block";
   });
-  toggleBtn.textContent = imagesHidden ? "Görselleri Göster" : "Görselleri Gizle";
+  toggleBtn.textContent=imagesHidden?"Görselleri Göster":"Görselleri Gizle";
 });
 
 /* İlk açılış */
 newGame();
 </script>
-
 </body>
 </html>
