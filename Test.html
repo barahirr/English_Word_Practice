@@ -13,6 +13,7 @@
   }
   select {
     padding: 4px 8px; font-size: 16px; margin: 0 4px; border-radius: 6px;
+    border: 2px solid #ccc;
   }
   button {
     margin: 16px auto; display: block; padding: 10px 20px; 
@@ -67,8 +68,16 @@ function buildGame() {
 function checkAnswers() {
   let correct = 0;
   SENTENCES.forEach((s, i) => {
-    const val = document.getElementById("q"+i).value;
-    if(val === s.answer) correct++;
+    const sel = document.getElementById("q"+i);
+    const val = sel.value;
+    if(val === s.answer) {
+      correct++;
+      sel.style.backgroundColor = "lightgreen";   // ✅ Doğru -> yeşil
+      sel.style.borderColor = "green";
+    } else {
+      sel.style.backgroundColor = "#ffcccc";      // ❌ Yanlış -> kırmızı
+      sel.style.borderColor = "red";
+    }
   });
   const resultDiv = document.getElementById("result");
   if(correct === SENTENCES.length) {
