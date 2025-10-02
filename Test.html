@@ -1,3 +1,53 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<title>İngilizce Eşleştirme Oyunları</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body { font-family: Arial, sans-serif; background: #f0f4f9; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 10px; }
+  .topbar { text-align:center; margin-bottom:20px; }
+  select, button {
+    padding: 6px 10px; font-size: 16px; border-radius: 6px; border: 1px solid #aaa;
+    margin: 0 6px;
+  }
+  .sentence { 
+    background: #fff; border: 2px solid #ccc; border-radius: 8px; padding: 12px; 
+    margin: 10px auto; max-width: 600px; font-size: 18px;
+  }
+  select.answer {
+    padding: 4px 8px; font-size: 16px; margin: 0 4px; border-radius: 6px;
+    border: 2px solid #ccc;
+  }
+  button.check {
+    margin: 16px auto; display: block; padding: 10px 20px; 
+    background: #4caf50; color: white; border: none; border-radius: 6px; 
+    font-size: 16px; cursor: pointer;
+  }
+  button.check:hover { background: #45a049; }
+  .result { text-align: center; font-size: 18px; margin-top: 20px; font-weight: bold; }
+  .correct { color: green; }
+  .wrong { color: red; }
+</style>
+</head>
+<body>
+
+<h1>İngilizce Eşleştirme Oyunları</h1>
+
+<div class="topbar">
+  <label>Kategori: 
+    <select id="categorySelect" onchange="buildGame()">
+      <option value="am_is_are">Am / Is / Are</option>
+      <option value="have_has_to">Have / Has To</option>
+    </select>
+  </label>
+  <button class="check" onclick="checkAnswers()">Cevapları Kontrol Et</button>
+</div>
+
+<div id="game"></div>
+<div id="result" class="result"></div>
+
 <script>
 const GAMES = {
   am_is_are: [
@@ -36,4 +86,65 @@ const GAMES = {
     {text: "My sister ..... feed the cat.", answer: "has to", options:["have to","has to"]}
   ]
 };
+
+function buildGame() {
+  const gameDiv = document.getElementById("game");
+  const category = document.getElementById("categorySelect").value;
+  const SENTENCES = GAMES[category];
+
+  gameDiv.innerHTML = "";
+  SENTENCES.forEach((s, i) => {
+    let optionsHtml = `<option value="">?</option>`;
+    s.options.forEach(opt=>{
+      optionsHtml += `<option value="${opt}">${opt}</option>`;
+    });
+
+    const html = `
+      <div class="sentence">
+        ${s.text.replace(".....", `
+          <select class="answer" id="q${i}">
+            ${optionsHtml}
+          </select>
+        `)}
+      </div>
+    `;
+    gameDiv.innerHTML += html;
+  });
+
+  document.getElementById("result").innerHTML = "";
+}
+
+function checkAnswers() {
+  const category = document.getElementById("categorySelect").value;
+  const SENTENCES = GAMES[category];
+
+  let correct = 0;
+  SENTENCES.forEach((s, i) => {
+    const sel = document.getElementById("q"+i);
+    const val = sel.value;
+    if(val === s.answer) {
+      correct++;
+      sel.style.backgroundColor = "lightgreen";
+      sel.style.borderColor = "green";
+    } else {
+      sel.style.backgroundColor = "#ffcccc";
+      sel.style.borderColor = "red";
+    }
+  });
+
+  const resultDiv = document.getElementById("result");
+  if(correct === SENTENCES.length) {
+    resultDiv.innerHTML = `🎉 Tebrikler! Tüm cevaplar doğru. (${correct}/${SENTENCES.length})`;
+    resultDiv.className = "result correct";
+  } else {
+    resultDiv.innerHTML = `✅ Doğru: ${correct} ❌ Yanlış: ${SENTENCES.length - correct}`;
+    resultDiv.className = "result wrong";
+  }
+}
+
+// ilk açılışta oyun gelsin
+buildGame();
 </script>
+
+</body>
+</html>
