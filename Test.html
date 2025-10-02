@@ -2,376 +2,86 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8" />
-<title>Kategorili Kelime Eşleştirme Oyunu</title>
+<title>Am / Is / Are Eşleştirme Oyunu</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
-  body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:20px;}
-  h1{text-align:center;margin:6px 0 16px;}
-  .topbar{display:flex;justify-content:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
-  select,button{padding:8px 12px;font-size:15px;border-radius:6px;border:1px solid #ccc;background:#fff;}
-  .game{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
-  .column {
-    display: grid;
-    grid-template-columns: repeat(3, 160px);
-    column-gap: 30px;
-    row-gap: 20px;
-    margin-bottom: 12px;
-    justify-content: center;
+  body { font-family: Arial, sans-serif; background: #f0f4f9; margin: 0; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 20px; }
+  .sentence { 
+    background: #fff; border: 2px solid #ccc; border-radius: 8px; padding: 12px; 
+    margin: 10px auto; max-width: 500px; font-size: 18px;
   }
-  .card{
-    height:100px;width:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    background:#fff8dc;border:2px solid #d4a017;border-radius:10px;cursor:pointer;font-weight:bold;
-    transition:0.18s;text-align:center;padding:6px;user-select:none;
+  select {
+    padding: 4px 8px; font-size: 16px; margin: 0 4px; border-radius: 6px;
   }
-  .card:hover{transform:translateY(-4px);box-shadow:0 6px 14px rgba(0,0,0,0.08);}
-  .card.selected{background:#add8e6;border-color:#4682b4;}
-  .card.matched{background:#90ee90;border-color:#2e7d32;color:#1b5e20;cursor:default;box-shadow:none;}
-  .card.wrong{background:#f08080 !important;border-color:#c0392b !important;color:#fff;}
-  .status{text-align:center;margin-top:18px;font-size:16px;}
-  .scoreboard {
-    width:220px; background:#fff; border:2px solid #aaa; padding:10px;
-    border-radius:10px; font-size:14px; line-height:1.6; margin-top:10px;
+  button {
+    margin: 16px auto; display: block; padding: 10px 20px; 
+    background: #4caf50; color: white; border: none; border-radius: 6px; 
+    font-size: 16px; cursor: pointer;
   }
-  .scoreboard h3 { margin:0 0 6px; text-align:center; }
-  .scoreboard .first { font-size:16px; font-weight:bold; }
-  @media(max-width:520px){
-    .column{grid-template-columns:repeat(2,42vw);}
-    .card{width:42vw;height:90px;font-size:14px;}
-  }
+  button:hover { background: #45a049; }
+  .result { text-align: center; font-size: 18px; margin-top: 20px; font-weight: bold; }
+  .correct { color: green; }
+  .wrong { color: red; }
 </style>
 </head>
 <body>
 
-<h1>Kategorili Kelime Eşleştirme Oyunu</h1>
+<h1>Am / Is / Are Oyunu</h1>
 
-<div class="topbar">
-  <label>Kategori:
-    <select id="categorySelect">
-      <option value="Aile">Aile</option>
-      <option value="countries">Ülkeler</option>
-      <option value="People_at_school">Okuldaki İnsanlar</option>
-      <option value="school">Okul Kuralları</option>
-      <option value="Önemli_Kelimeler">Önemli Kelimeler</option>
-      <option value="Okuldaki_Yerler">Okuldaki Yerler</option>
-      <option value="Okul_Klübü">Okul Klübü</option>
-      <option value="Resmi_Tatiller">Resmi Tatiller</option>
-    </select>
-  </label>
-  <label>Süre:
-    <select id="timeSelect">
-      <option value="0">Sınırsız</option>
-      <option value="30">30 sn</option>
-      <option value="60">60 sn</option>
-    </select>
-  </label>
-  <button id="newBtn">Yeni Oyun</button>
-  <button id="toggleImagesBtn">Görselleri Gizle</button>
-  <div id="status" class="status">Puan: 0</div>
-</div>
-
-<div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
-  <div class="game">
-    <div class="column" id="englishCol"></div>
-    <div class="column" id="turkishCol"></div>
-  </div>
-  <div class="scoreboard" id="scoreBoard"><h3>🏆 Skor Tablosu</h3></div>
-</div>
+<div id="game"></div>
+<button onclick="checkAnswers()">Cevapları Kontrol Et</button>
+<div id="result" class="result"></div>
 
 <script>
-/* ===== Kelimeler ===== */
-const WORD_SETS = {
+const SENTENCES = [
+  {text: "He ..... name John.", answer: "is"},
+  {text: "I ..... a student.", answer: "am"},
+  {text: "They ..... friends.", answer: "are"},
+  {text: "She ..... my sister.", answer: "is"},
+  {text: "We ..... in the classroom.", answer: "are"},
+  {text: "You ..... very kind.", answer: "are"},
+  {text: "It ..... a dog.", answer: "is"},
+];
 
-  Aile: [
-  {en:"Mother", tr:"Anne", img:"https://img.icons8.com/fluency/96/mother.png"},
-  {en:"Father", tr:"Baba", img:"https://img.icons8.com/?size=100&id=2K3aCA8MSSKL&format=png&color=000000"},
-  {en:"Sister", tr:"Kız Kardeş", img:"https://img.icons8.com/?size=100&id=PVYFvgPlVSTi&format=png&color=000000"},
-  {en:"Brother", tr:"Erkek Kardeş", img:"https://img.icons8.com/?size=100&id=Pz87K0EGoCcH&format=png&color=000000"},
-  {en:"Grandmother", tr:"Büyükanne", img:"https://img.icons8.com/?size=100&id=118263&format=png&color=000000"},
-  {en:"Grandfather", tr:"Büyükbaba", img:"https://img.icons8.com/?size=100&id=118242&format=png&color=000000"},
-  {en:"Uncle", tr:"Amca / Dayı", img:"https://img.icons8.com/?size=100&id=vWGIHLOdoUCu&format=png&color=000000"},
-  {en:"Aunt", tr:"Teyze / Hala", img:"https://img.icons8.com/?size=100&id=67418&format=png&color=000000"},
-  {en:"Cousin", tr:"Kuzen", img:"https://img.icons8.com/?size=100&id=OYwtttzJwwPM&format=png&color=000000"},
-  {en:"Son", tr:"Oğul", img:"https://img.icons8.com/?size=100&id=80976&format=png&color=000000"},
-  {en:"Daughter", tr:"Kız Evlat", img:"https://img.icons8.com/?size=100&id=Tz7F18r2ScyJ&format=png&color=000000"},
-  {en:"Nephew", tr:"Erkek Yeğen", img:"https://img.icons8.com/?size=100&id=dlxq834FgFbq&format=png&color=000000"},
-  {en:"Niece", tr:"Kız Yeğen", img:"https://img.icons8.com/?size=100&id=yQebeUsniRV6&format=png&color=000000"},
-  {en:"Baby", tr:"Bebek", img:"https://img.icons8.com/fluency/96/baby.png"},
-  {en:"Parents", tr:"Ebeveynler", img:"https://img.icons8.com/?size=100&id=oXRBD7zUrO2g&format=png&color=000000"},
-  {en:"Children", tr:"Çocuklar", img:"https://img.icons8.com/fluency/96/children.png"},
-  {en:"Husband", tr:"Koca", img:"https://img.icons8.com/?size=100&id=0QAG3DFKpzGa&format=png&color=000000"},
-  {en:"Wife", tr:"Eş (Kadın)", img:"https://img.icons8.com/?size=100&id=cTWlDTMm9NfY&format=png&color=000000"},
-  {en:"Family", tr:"Aile", img:"https://img.icons8.com/fluency/96/family.png"}
-],
-
-
-  countries: [
-    {en:"Argentina", tr:"Arjantin", img:"https://img.icons8.com/color/96/argentina-circular.png"},
-    {en:"Australia", tr:"Avustralya", img:"https://img.icons8.com/color/96/australia-circular.png"},
-    {en:"Azerbaijan", tr:"Azerbaycan", img:"https://img.icons8.com/color/96/azerbaijan-circular.png"},
-    {en:"Brazil", tr:"Brezilya", img:"https://img.icons8.com/color/96/brazil-circular.png"},
-    {en:"Canada", tr:"Kanada", img:"https://img.icons8.com/color/96/canada-circular.png"},
-    {en:"China", tr:"Çin", img:"https://img.icons8.com/color/96/china-circular.png"},
-    {en:"Egypt", tr:"Mısır", img:"https://img.icons8.com/color/96/egypt-circular.png"},
-    {en:"France", tr:"Fransa", img:"https://img.icons8.com/color/96/france-circular.png"},
-    {en:"Germany", tr:"Almanya", img:"https://img.icons8.com/color/96/germany-circular.png"},
-    {en:"Greece", tr:"Yunanistan", img:"https://img.icons8.com/color/96/greece-circular.png"},
-    {en:"Italy", tr:"İtalya", img:"https://img.icons8.com/color/96/italy-circular.png"},
-    {en:"Japan", tr:"Japonya", img:"https://img.icons8.com/color/96/japan-circular.png"},
-    {en:"Kazakhstan", tr:"Kazakistan", img:"https://img.icons8.com/color/96/kazakhstan-circular.png"},
-    {en:"Kyrgyzstan", tr:"Kırgızistan", img:"https://img.icons8.com/color/96/kyrgyzstan-circular.png"},
-    {en:"Mexico", tr:"Meksika", img:"https://img.icons8.com/color/96/mexico-circular.png"},
-    {en:"Russia", tr:"Rusya", img:"https://img.icons8.com/?size=100&id=vioRCshpCBKv&format=png&color=000000"},
-    {en:"South Korea", tr:"Güney Kore", img:"https://img.icons8.com/color/96/south-korea-circular.png"},
-    {en:"Spain", tr:"İspanya", img:"https://img.icons8.com/color/96/spain-circular.png"},
-    {en:"The United Kingdom", tr:"Birleşik Krallık", img:"https://img.icons8.com/color/96/great-britain-circular.png"},
-    {en:"The United States", tr:"Amerika Birleşik Devletleri", img:"https://img.icons8.com/color/96/usa-circular.png"},
-    {en:"Turkish Republic of Northern Cyprus", tr:"Kuzey Kıbrıs Türk Cumhuriyeti", img:"https://img.icons8.com/color/96/cyprus-circular.png"},
-    {en:"Turkmenistan", tr:"Türkmenistan", img:"https://img.icons8.com/color/96/turkmenistan-circular.png"},
-    {en:"Uzbekistan", tr:"Özbekistan", img:"https://img.icons8.com/color/96/uzbekistan-circular.png"}
-  ],
-
-  school: [
-    {en:"Be On Time", tr:"Zamanında Gel", img:"https://img.icons8.com/fluency/96/clock.png"},
-    {en:"Be Quiet", tr:"Sessiz Ol", img:"https://img.icons8.com/?size=100&id=44330&format=png&color=000000"},
-    {en:"Clean The Board", tr:"Tahtayı Temizle", img:"https://img.icons8.com/?size=100&id=IOrJvlpoEqLo&format=png&color=000000"},
-    {en:"Do Your Homework", tr:"Ödevini Yap", img:"https://img.icons8.com/?size=100&id=WpoTIyuLP1tF&format=png&color=000000"},
-    {en:"Line Up", tr:"Sıraya Gir", img:"https://img.icons8.com/?size=100&id=inB3UzjnbdGx&format=png&color=000000"},
-    {en:"Listen To The Teacher", tr:"Öğretmeni Dinle", img:"https://img.icons8.com/?size=100&id=80829&format=png&color=000000"},
-    {en:"Obey The Rules", tr:"Kurallara Uy", img:"https://img.icons8.com/fluency/96/rules.png"},
-    {en:"Raise Your Hand", tr:"Elini Kaldır", img:"https://img.icons8.com/?size=100&id=2727&format=png&color=000000"},
-    {en:"Respect Your Friends", tr:"Arkadaşlarına Saygı Göster", img:"https://img.icons8.com/?size=100&id=vrRinHuYod9x&format=png&color=000000"},
-    {en:"Wear Your Uniform", tr:" Üniformanı Giy", img:"https://img.icons8.com/?size=100&id=EkMoMGEq9F23&format=png&color=000000"},
-    {en:"Work In Groups", tr:"Grup Çalışması Yap", img:"https://img.icons8.com/fluency/96/teamwork.png"},
-    {en:"Don't Be Late", tr:"Geç Kalma", img:"https://img.icons8.com/fluency/96/no-entry.png"},
-    {en:"Don't Eat In Class", tr:"Sınıfta Yemek Yeme", img:"https://img.icons8.com/fluency/96/no-food.png"},
-    {en:"Don't Fight", tr:"Kavga Etme", img:"https://img.icons8.com/?size=100&id=bmlOtTgfYNfC&format=png&color=000000"},
-    {en:"Don't Make Noise", tr:"Gürültü Yapma", img:"https://img.icons8.com/fluency/96/mute.png"},
-    {en:"Don't Run In The Corridors", tr:"Koridorda Koşma", img:"https://img.icons8.com/fluency/96/no-running.png"},
-    {en:"Don't Shout", tr:"Bağırma", img:"https://img.icons8.com/?size=100&id=6669&format=png&color=000000"},
-    {en:"Don't Be Rude", tr:"Kaba Olma", img:"https://img.icons8.com/?size=100&id=44330&format=png&color=000000"},
-    {en:"Don't Share Your Password", tr:"Şifreni Paylaşma", img:"https://img.icons8.com/fluency/96/password.png"},
-    {en:"Don't Give False Information", tr:"Yanlış Bilgi Verme", img:"https://img.icons8.com/fluency/96/warning-shield.png"},
-    {en:"Don't Chew Gum In Public", tr:"Toplum İçinde Sakız Çiğneme", img:"https://img.icons8.com/?size=100&id=WIuV9vTnU1rl&format=png&color=000000"}
-  ],
-
-  People_at_school: [
-    {en:"Art Teacher", tr:"Resim Öğretmeni", img:"https://img.icons8.com/fluency/96/art-prices.png"},
-    {en:"Assistant To The Headmaster", tr:"Müdür Yardımcısı", img:"https://img.icons8.com/fluency/96/conference.png"},
-    {en:"Assistant", tr:"Yardımcı Personel", img:"https://img.icons8.com/?size=100&id=pCstPfDoRAKt&format=png&color=000000"},
-    {en:"Classmate", tr:"Sınıf Arkadaşı", img:"https://img.icons8.com/fluency/96/group.png"},
-    {en:"Cleaner", tr:"Temizlik Görevlisi", img:"https://img.icons8.com/?size=100&id=7638&format=png&color=000000"},
-    {en:"Coach", tr:"Antrenör", img:"https://img.icons8.com/fluency/96/whistle.png"},
-    {en:"Computer Teacher", tr:"Bilgisayar Öğretmeni", img:"https://img.icons8.com/fluency/96/computer.png"},
-    {en:"Cook", tr:"Aşçı", img:"https://img.icons8.com/fluency/96/chef-hat.png"},
-    {en:"English Teacher", tr:"İngilizce Öğretmeni", img:"https://img.icons8.com/?size=100&id=UUkjUn8c_bwn&format=png&color=000000"},
-    {en:"Headmaster", tr:"Okul Müdürü (Erkek)", img:"https://img.icons8.com/?size=100&id=mBzT9ySeO_go&format=png&color=000000"},
-    {en:"Headmistress", tr:"Okul Müdürü (Kadın)", img:"https://img.icons8.com/?size=100&id=owZ150JlNlBu&format=png&color=000000"},
-    {en:"Librarian", tr:"Kütüphaneci", img:"https://img.icons8.com/fluency/96/library.png"},
-    {en:"Music Teacher", tr:"Müzik Öğretmeni", img:"https://img.icons8.com/?size=100&id=qnt5rwLL0XlV&format=png&color=000000"},
-    {en:"P.E. Teacher", tr:"Beden Eğitimi Öğretmeni", img:"https://img.icons8.com/?size=100&id=9797&format=png&color=000000"},
-    {en:"Principal", tr:"Müdür", img:"https://img.icons8.com/fluency/96/teacher.png"},
-    {en:"School Nurse", tr:"Okul Hemşiresi", img:"https://img.icons8.com/fluency/96/nurse-female.png"},
-    {en:"Science Teacher", tr:"Fen Bilgisi Öğretmeni", img:"https://img.icons8.com/fluency/96/physics.png"},
-    {en:"Secretary", tr:"Sekreter", img:"https://img.icons8.com/fluency/96/office.png"},
-    {en:"Security Guard", tr:"Güvenlik Görevlisi", img:"https://img.icons8.com/?size=100&id=EML3C-WjW8gX&format=png&color=000000"},
-    {en:"Teacher", tr:"Öğretmen", img:"https://img.icons8.com/?size=100&id=YNd6fNNSgWDS&format=png&color=000000"}
-  ],
-
-  Önemli_Kelimeler: [
-    {en:"Arrange", tr:"Düzenlemek", img:"https://img.icons8.com/fluency/96/settings.png"},
-    {en:"Protect", tr:"Korumak", img:"https://img.icons8.com/fluency/96/shield.png"},
-    {en:"Invite", tr:"Davet Etmek", img:"https://img.icons8.com/fluency/96/invite.png"},
-    {en:"Prepare", tr:"Hazırlamak", img:"https://img.icons8.com/fluency/96/task.png"},
-    {en:"Organize", tr:"Organize Etmek", img:"https://img.icons8.com/?size=100&id=BY5FPbX5woPp&format=png&color=000000"},
-    {en:"Join", tr:"Katılmak", img:"https://img.icons8.com/fluency/96/add-user-group-man-man.png"},
-    {en:"Help", tr:"Yardım Etmek", img:"https://img.icons8.com/?size=100&id=vB2aQzp05MIo&format=png&color=000000"},
-    {en:"Share", tr:"Paylaşmak", img:"https://img.icons8.com/fluency/96/share.png"},
-    {en:"Visit", tr:"Ziyaret Etmek", img:"https://img.icons8.com/fluency/96/visit.png"},
-    {en:"Collect", tr:"Toplamak", img:"https://img.icons8.com/fluency/96/collect.png"},
-    {en:"Reading A Book", tr:"Kitap Okuma", img:"https://img.icons8.com/fluency/96/book.png"},
-    {en:"Drawing", tr:"Resim Çizme", img:"https://img.icons8.com/fluency/96/pencil.png"},
-    {en:"Singing", tr:"Şarkı Söyleme", img:"https://img.icons8.com/fluency/96/microphone.png"},
-    {en:"Dancing", tr:"Dans Etme", img:"https://img.icons8.com/?size=100&id=k9FxCSx03NK7&format=png&color=000000"},
-    {en:"Playing Games", tr:"Oyun Oynama", img:"https://img.icons8.com/fluency/96/controller.png"},
-    {en:"Planting Trees", tr:"Ağaç Dikme", img:"https://img.icons8.com/?size=100&id=2282&format=png&color=000000"},
-    {en:"Help The Elderly", tr:"Yaşlılara Yardım Etme", img:"https://img.icons8.com/fluency/96/elderly-person.png"},
-    {en:"Clean The Environment", tr:"Çevreyi Temizlemek", img:"https://img.icons8.com/?size=100&id=HPGkOuzYbPbi&format=png&color=000000"},
-    {en:"Take Photos", tr:"Fotoğraf Çekmek", img:"https://img.icons8.com/fluency/96/camera.png"},
-    {en:"Write A Letter", tr:"Mektup Yazmak", img:"https://img.icons8.com/?size=100&id=47792&format=png&color=000000"},
-	{en:"Contact", tr:"İletişim", img:"https://img.icons8.com/fluency/96/phone.png"},
-  {en:"Doing Experiments", tr:"Deney Yapmak", img:"https://img.icons8.com/fluency/96/test-tube.png"},
-  {en:"Enjoy", tr:"Zevk Almak", img:"https://img.icons8.com/fluency/96/smiling.png"},
-  {en:"Introduce", tr:"Tanıtmak", img:"https://img.icons8.com/fluency/96/presentation.png"},
-  {en:"Keep Safe", tr:"Güvende Tutmak", img:"https://img.icons8.com/fluency/96/lock.png"},
-  {en:"Learning New Things", tr:"Yeni Şeyler Öğrenmek", img:"https://img.icons8.com/fluency/96/open-book.png"},
-  {en:"Live", tr:"Yaşamak", img:"https://img.icons8.com/fluency/96/heart-with-pulse.png"},
-  {en:"Local Law", tr:"Yerel Kanun", img:"https://img.icons8.com/?size=100&id=68497&format=png&color=000000"},
-  {en:"Solving Problems", tr:"Problemleri Çözmek", img:"https://img.icons8.com/fluency/96/puzzle.png"},
-  {en:"Take Part", tr:"Katılmak", img:"https://img.icons8.com/fluency/96/conference.png"},
-  {en:"Welcome", tr:"Hoşgeldiniz", img:"https://img.icons8.com/?size=100&id=108783&format=png&color=000000"}
-
-  ],
-
-  Okuldaki_Yerler: [
-    {en:"Administration Department", tr:"İdari Bölüm", img:"https://img.icons8.com/?size=100&id=LChl-cn4Anu7&format=png&color=000000"},
-    {en:"Canteen", tr:"Kantin", img:"https://img.icons8.com/?size=100&id=OWkEmHIzCqqj&format=png&color=000000"},
-    {en:"Classroom", tr:"Sınıf", img:"https://img.icons8.com/fluency/96/classroom.png"},
-    {en:"Conference Hall", tr:"Konferans Salonu", img:"https://img.icons8.com/?size=100&id=b7arnnZuSFcp&format=png&color=000000"},
-    {en:"Corridor", tr:"Koridor", img:"https://img.icons8.com/?size=100&id=20158&format=png&color=000000"},
-    {en:"Department", tr:"Bölüm", img:"https://img.icons8.com/fluency/96/department.png"},
-    {en:"Garden", tr:"Bahçe", img:"https://img.icons8.com/?size=100&id=ain5yQ6TIy7g&format=png&color=000000"},
-    {en:"Gate", tr:"Giriş Kapısı", img:"https://img.icons8.com/fluency/96/door-opened.png"},
-    {en:"Gym", tr:"Spor Salonu", img:"https://img.icons8.com/?size=100&id=czvspa9W8eg0&format=png&color=000000"},
-    {en:"Lab", tr:"Laboratuvar", img:"https://img.icons8.com/?size=100&id=ZGK24cvlKaeR&format=png&color=000000"},
-    {en:"Library", tr:"Kütüphane", img:"https://img.icons8.com/fluency/96/books.png"},
-    {en:"Lunch Hall / Lunchroom", tr:"Yemekhane", img:"https://img.icons8.com/fluency/96/restaurant.png"},
-    {en:"Noticeboard", tr:"Duyuru Panosu", img:"https://img.icons8.com/fluency/96/noticeboard.png"},
-    {en:"Playground", tr:"Oyun Alanı", img:"https://img.icons8.com/fluency/96/playground.png"},
-    {en:"Sports Field", tr:"Spor Sahası", img:"https://img.icons8.com/?size=100&id=UHf2YxgnD9Pz&format=png&color=000000"},
-    {en:"Teachers' Room", tr:"Öğretmenler Odası", img:"https://img.icons8.com/?size=100&id=nMpPiGqEoIsw&format=png&color=000000"}
-  ],
-
-  Okul_Klübü: [
-    {en:"Art Club", tr:"Resim / Sanat Kulübü", img:"https://img.icons8.com/fluency/96/art-prices.png"},
-    {en:"Ballet Club", tr:"Bale Kulübü", img:"https://img.icons8.com/?size=100&id=YaIWBsN1atLE&format=png&color=000000"},
-    {en:"Chess Club", tr:"Satranç Kulübü", img:"https://img.icons8.com/?size=100&id=fdbUTTNsuZNY&format=png&color=000000"},
-    {en:"Drama Club", tr:"Tiyatro Kulübü", img:"https://img.icons8.com/?size=100&id=W0t6JhOjSfLF&format=png&color=000000"},
-    {en:"Environment Club", tr:"Çevre Kulübü", img:"https://img.icons8.com/fluency/96/earth-care.png"},
-    {en:"Film Club", tr:"Film Kulübü", img:"https://img.icons8.com/fluency/96/movie-projector.png"},
-    {en:"Folk-Dance Club", tr:"Halk Oyunları Kulübü", img:"https://img.icons8.com/?size=100&id=FwIqt5UrNxTm&format=png&color=000000"},
-    {en:"Math(s) Club", tr:"Matematik Kulübü", img:"https://img.icons8.com/fluency/96/math.png"},
-    {en:"Music Club", tr:"Müzik Kulübü", img:"https://img.icons8.com/fluency/96/musical-notes.png"},
-    {en:"Science Club", tr:"Fen Kulübü", img:"https://img.icons8.com/fluency/96/physics.png"},
-    {en:"Sports Club", tr:"Spor Kulübü", img:"https://img.icons8.com/fluency/96/basketball.png"},
-    {en:"Technology Club", tr:"Teknoloji Kulübü", img:"https://img.icons8.com/?size=100&id=113534&format=png&color=000000"}
-  ],
-
-  Resmi_Tatiller: [
-    {en:"Republic Day", tr:"Cumhuriyet Bayramı", img:"https://img.icons8.com/?size=100&id=Lo6X5VXOeFs5&format=png&color=000000"},
-    {en:"National Sovereignty And Children's Day", tr:"Ulusal Egemenlik Ve Çocuk Bayramı", img:"https://img.icons8.com/fluency/96/children.png"},
-    {en:"Commemoration Of Atatürk, Youth And Sports Day", tr:"Atatürk'ü Anma, Gençlik Ve Spor Bayramı", img:"https://img.icons8.com/?size=100&id=SMjRXXIK5MOb&format=png&color=000000"},
-    {en:"15 July Democracy And National Unity Day", tr:"15 Temmuz Demokrasi Ve Milli Birlik Günü", img:"https://img.icons8.com/?size=100&id=TeqGqvYHxYoW&format=png&color=000000"},
-    {en:"Victory Day", tr:"Zafer Bayramı", img:"https://img.icons8.com/fluency/96/medal.png"},
-    {en:"Eid Al-Fitr", tr:"Ramazan Bayramı", img:"https://img.icons8.com/fluency/96/mosque.png"},
-    {en:"Festival Of Sacrifice (Eid Al-Adha)", tr:"Kurban Bayramı", img:"https://img.icons8.com/fluency/96/sheep.png"}
-  ]
-};
-	
-// let playerName = prompt("Adınızı giriniz:") || "Misafir";
-	
-let playerName = "Misafir";
-let wrongWords = [];
-let currentWords = WORD_SETS.Aile;
-let selected=null,timer=null,timeLeft=0,score=0;
-let imagesHidden=false;
-let gameStarted=false;
-let selectedCategory="Aile";
-
-/* Skor Kaydetme */
-function saveScore(name, score, category, timeUsed) {
-  let scores = JSON.parse(localStorage.getItem("scores")) || {};
-  if(!scores[category]) scores[category] = [];
-  scores[category].push({name,score,time:timeUsed});
-  scores[category].sort((a,b)=>b.score-a.score);
-  localStorage.setItem("scores", JSON.stringify(scores));
-  showScoreBoard();
+function buildGame() {
+  const gameDiv = document.getElementById("game");
+  gameDiv.innerHTML = "";
+  SENTENCES.forEach((s, i) => {
+    const html = `
+      <div class="sentence">
+        ${s.text.replace(".....", `
+          <select id="q${i}">
+            <option value="">?</option>
+            <option value="am">am</option>
+            <option value="is">is</option>
+            <option value="are">are</option>
+          </select>
+        `)}
+      </div>
+    `;
+    gameDiv.innerHTML += html;
+  });
 }
 
-/* Skor Tablosu */
-function showScoreBoard() {
-  let scores = JSON.parse(localStorage.getItem("scores")) || {};
-  let list = scores[selectedCategory] || [];
-  let html = "<h3>🏆 Skor Tablosu</h3>";
-  list.slice(0,10).forEach((s,i)=>{
-    let cls = i===0 ? "first" : "";
-    html += `<div class="${cls}">${i+1}. ${s.name}: ${s.score} puan (${s.time} sn)</div>`;
+function checkAnswers() {
+  let correct = 0;
+  SENTENCES.forEach((s, i) => {
+    const val = document.getElementById("q"+i).value;
+    if(val === s.answer) correct++;
   });
-  document.getElementById("scoreBoard").innerHTML = html;
-}
-
-/* Yeni Oyun */
-function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
-function newGame(){
-  clearInterval(timer);
-  selected=null;score=0;gameStarted=false;wrongWords=[];
-  updateStatus();
-  const engCol=document.getElementById("englishCol");
-  const trCol=document.getElementById("turkishCol");
-  engCol.innerHTML=""; trCol.innerHTML="";
-  shuffle([...currentWords]).forEach(w=>{
-    const d=document.createElement("div");
-    d.className="card";
-    d.innerHTML=`<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.en}</div>`;
-    d.dataset.index=currentWords.findIndex(x=>x.en===w.en);
-    d.dataset.lang="en";
-    d.addEventListener("click",()=>selectCard(d));
-    engCol.appendChild(d);
-  });
-  shuffle([...currentWords]).forEach(w=>{
-    const d=document.createElement("div");
-    d.className="card";
-    d.innerHTML=`<img src="${w.img}" style="width:48px;height:48px;margin-bottom:8px;"><div>${w.tr}</div>`;
-    d.dataset.index=currentWords.findIndex(x=>x.tr===w.tr);
-    d.dataset.lang="tr";
-    d.addEventListener("click",()=>selectCard(d));
-    trCol.appendChild(d);
-  });
-  timeLeft=parseInt(document.getElementById("timeSelect").value);
-  if (imagesHidden) {
-    document.querySelectorAll("#englishCol .card img").forEach(img=>{img.style.display="none";});
-  }
-  showScoreBoard();
-}
-function updateStatus(){const st=document.getElementById("status");st.textContent = timeLeft>0 ? `Süre: ${timeLeft} sn | Puan: ${score}` : `Puan: ${score}`;}
-function disableAll(){document.querySelectorAll(".card").forEach(c=>c.style.pointerEvents="none");}
-
-/* Kart Seçme */
-function selectCard(card){
-  if(!gameStarted){
-    gameStarted=true;
-    if(timeLeft>0){
-      timer=setInterval(()=>{timeLeft--;updateStatus();if(timeLeft<=0){clearInterval(timer);disableAll();alert("⏰ Süre doldu! Puanın: "+score);}},1000);
-    }
-  }
-  if(card.dataset.lang==="en"){const u=new SpeechSynthesisUtterance(card.textContent.trim());u.lang="en-US";speechSynthesis.speak(u);}
-  if(card.classList.contains("matched")) return;
-  if(!selected){ card.classList.add("selected"); selected=card; return; }
-  if(card===selected) return;
-
-  if(card.dataset.index===selected.dataset.index && card.dataset.lang!==selected.dataset.lang){
-    card.classList.add("matched"); selected.classList.add("matched");
-    card.classList.remove("selected"); selected.classList.remove("selected");
-    score+=10; updateStatus(); selected=null;
-    if(document.querySelectorAll(".matched").length===currentWords.length*2){
-      clearInterval(timer); let used=parseInt(document.getElementById("timeSelect").value)||"Sınırsız"; score+=50; updateStatus();
-      saveScore(playerName, score, selectedCategory, used);
-      if(wrongWords.length>0 && confirm("Yanlış yaptığın kelimelerle tekrar oynamak ister misin?")){
-        currentWords = wrongWords; wrongWords=[]; newGame(); return;
-      }
-      alert("🎉 Tebrikler! Toplam Puan: "+score);
-    }
-  }else{
-    if(card.dataset.lang==="en"){ wrongWords.push(currentWords[card.dataset.index]); }
-    else { wrongWords.push(currentWords[selected.dataset.index]); }
-    card.classList.add("wrong"); selected.classList.add("wrong");
-    score-=5; updateStatus();
-    setTimeout(()=>{card.classList.remove("wrong","selected");selected.classList.remove("wrong","selected");selected=null;},600);
+  const resultDiv = document.getElementById("result");
+  if(correct === SENTENCES.length) {
+    resultDiv.innerHTML = `🎉 Tebrikler! Tüm cevaplar doğru. (${correct}/${SENTENCES.length})`;
+    resultDiv.className = "result correct";
+  } else {
+    resultDiv.innerHTML = `✅ Doğru: ${correct} ❌ Yanlış: ${SENTENCES.length - correct}`;
+    resultDiv.className = "result wrong";
   }
 }
 
-/* Olaylar */
-document.getElementById("newBtn").addEventListener("click", newGame);
-document.getElementById("categorySelect").addEventListener("change",e=>{
-  currentWords = WORD_SETS[e.target.value]; selectedCategory=e.target.value; newGame();
-});
-const toggleBtn=document.getElementById("toggleImagesBtn");
-toggleBtn.addEventListener("click",()=>{imagesHidden=!imagesHidden;
-  document.querySelectorAll("#englishCol .card img").forEach(img=>{img.style.display=imagesHidden?"none":"block";});
-  toggleBtn.textContent=imagesHidden?"Görselleri Göster":"Görselleri Gizle";
-});
-
-/* İlk açılış */
-newGame();
+buildGame();
 </script>
+
 </body>
 </html>
