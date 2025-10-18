@@ -55,6 +55,7 @@
       <option value="Okuldaki_Yerler">Okuldaki Yerler</option>
       <option value="Okul_Klübü">Okul Klübü</option>
       <option value="Resmi_Tatiller">Resmi Tatiller</option>
+      <option value="Unite_2">2. Unite</option>
     </select>
   </label>
   <label>Süre:
@@ -107,6 +108,80 @@ const WORD_SETS = {
   {en:"Husband", tr:"Koca", img:"https://img.icons8.com/?size=100&id=0QAG3DFKpzGa&format=png&color=000000"},
   {en:"Wife", tr:"Eş (Kadın)", img:"https://img.icons8.com/?size=100&id=cTWlDTMm9NfY&format=png&color=000000"},
   {en:"Family", tr:"Aile", img:"https://img.icons8.com/fluency/96/family.png"}
+],
+
+Unite_2: [
+  {en:"Curtain", tr:"Perde", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa9f.svg"},      // window 🪟
+  {en:"Pillow", tr:"Yastık", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cc.svg"},       // person in bed 🛌 (yastık çağrışımı)
+  {en:"Bed", tr:"Yatak", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cf.svg"},            // bed 🛏️
+  {en:"Toilet", tr:"Tuvalet", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6bd.svg"},       // toilet 🚽
+  {en:"Bath", tr:"Banyo", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6c1.svg"},           // bathtub 🛁
+  {en:"Washbasin", tr:"Lavabo", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6bf.svg"},     // shower 🚿 (lavabo için en yakın su/temizlik)
+  {en:"Desk", tr:"Çalışma Masası", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4bb.svg"},  // laptop 💻 (çalışma masası bağlamı)
+  {en:"Wardrobe", tr:"Gardrop", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9e5.svg"},     // coat 🧥
+  {en:"Single bed", tr:"Tekli Yatak", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cf.svg"},// bed 🛏️
+  {en:"Bedside cabinet", tr:"Komodin", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f5c4.svg"},// filing cabinet 🗄️ (dolap/komodin çağrışımı)
+  {en:"Carpet", tr:"Halı", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa9f.svg"},          // window 🪟 (zemin/oda nesnesi yoksa genel evle değiştirilebilir)
+  {en:"Sink", tr:"Mutfak Lavabosu", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6bf.svg"}, // shower 🚿 (musluk/akira yok)
+  {en:"Cupboard", tr:"Dolap", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f5c4.svg"},       // filing cabinet 🗄️
+  {en:"Cooker", tr:"Ocak", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f373.svg"},          // cooking 🍳
+  {en:"Fridge", tr:"Buzdolabı", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9ca.svg"},     // ice cube 🧊 (soğutma çağrışımı)
+  {en:"Table", tr:"Masa", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f37d.svg"},           // fork & knife with plate 🍽️
+  {en:"Chair", tr:"Sandalye", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa91.svg"},       // chair 🪑
+  {en:"Sofa", tr:"Kanepe", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cb.svg"},          // couch & lamp 🛋️
+  {en:"Coffee table", tr:"Sehpa", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2615.svg"},    // hot beverage ☕
+  {en:"Armchair", tr:"Koltuk", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cb.svg"},      // couch & lamp 🛋️
+  {en:"Lamp", tr:"Lamba", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4a1.svg"},           // light bulb 💡
+  {en:"Painting", tr:"Tablo", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f5bc.svg"},       // framed picture 🖼️
+  {en:"Fire place", tr:"Şömine", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f525.svg"},    // fire 🔥
+  {en:"Appliances", tr:"Cihazlar", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f50c.svg"},  // electric plug 🔌
+  {en:"Upstair", tr:"Üst Kat", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b06.svg"},       // up arrow ⬆️
+  {en:"Downstairs", tr:"Alt Kat", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b07.svg"},    // down arrow ⬇️
+  {en:"Kitchen", tr:"Mutfak", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f373.svg"},       // cooking 🍳
+  {en:"Bedroom", tr:"Yatak Odası", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cf.svg"},  // bed 🛏️
+  {en:"Master bedroom", tr:"Ana Yatak Odası", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6cf.svg"}, // bed 🛏️
+  {en:"Ordinary home", tr:"Sıradan Ev", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3e0.svg"}, // house 🏠
+  {en:"Type", tr:"Tür", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3f7.svg"},             // label 🏷️
+  {en:"Quiet", tr:"Sakin", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f92b.svg"},          // shushing face 🤫
+  {en:"Canal boat", tr:"Kanal Botu", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6f6.svg"},// canoe 🛶
+  {en:"Cosy", tr:"Rahat, Sıcak", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f56f.svg"},    // candle 🕯️
+  {en:"Shower", tr:"Duş", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6bf.svg"},           // shower 🚿
+  {en:"Unusual", tr:"Sıradışı", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f9e9.svg"},     // puzzle piece 🧩
+  {en:"Noisy", tr:"Gürültülü", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f50a.svg"},      // speaker high volume 🔊
+  {en:"Ugly", tr:"Çirkin", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f922.svg"},          // nauseated face 🤢
+  {en:"Great view", tr:"Muhteşem Manzara", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f304.svg"}, // sunrise over mountains 🌄
+  {en:"Library", tr:"Kütüphane", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4da.svg"},    // books 📚
+  {en:"Gym", tr:"Spor Salonu", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3cb.svg"},      // person lifting weights 🏋️
+  {en:"Department store", tr:"Çok Katlı Mağaza", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3ec.svg"}, // department store 🏬
+  {en:"Why that?", tr:"Nedenmiş O", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2753.svg"},   // question mark ❓
+  {en:"Sound nice", tr:"Kulağa Hoş Geliyor", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f44d.svg"}, // thumbs up 👍
+  {en:"What's your house like?", tr:"Evin Nasıl Bir Yer?", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4ac.svg"}, // speech balloon 💬
+  {en:"Detached", tr:"Müstakil Ev", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3e0.svg"}, // house 🏠
+  {en:"Semi detached", tr:"Yarı Müstakil Ev", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3d8.svg"}, // houses 🏘️
+  {en:"Suburb", tr:"Dış Mahalle", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3d8.svg"},   // houses 🏘️
+  {en:"Driveway", tr:"Garaj Önü", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f697.svg"},   // automobile 🚗
+  {en:"Floor", tr:"Zemin", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1fa95.svg"},          // wood 🪵
+  {en:"Row", tr:"Sıra", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2194.svg"},              // left-right arrow ↔️
+  {en:"Yard", tr:"Bahçe", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3e1.svg"},           // house with garden 🏡
+  {en:"Block of flats", tr:"Apartman Blokları (Site)", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3e2.svg"}, // office building 🏢
+  {en:"Terraced", tr:"Sıra Sıra Teraslı Evler", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3d8.svg"}, // houses 🏘️
+  {en:"Countryside", tr:"Şehir Dışı, Kırsal", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f3de.svg"}, // national park 🏞️
+  {en:"Cottage", tr:"Kulübe", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f6d6.svg"},       // hut 🛖
+  {en:"Scale", tr:"Çap", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2696.svg"},             // scales ⚖️
+  {en:"Relationship", tr:"İlişki", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f91d.svg"},  // handshake 🤝
+  {en:"Size", tr:"Ebat, Boyut", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4cf.svg"},     // straight ruler 📏
+  {en:"Step", tr:"Adım", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f463.svg"},            // footprints 👣
+  {en:"Measure", tr:"Ölçüm", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4cf.svg"},        // straight ruler 📏
+  {en:"Distance", tr:"Mesafe", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2194.svg"},       // left-right arrow ↔️
+  {en:"Measurement", tr:"Ölçüm", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4d0.svg"},    // triangular ruler 📐
+  {en:"Bus ride away", tr:"Otobüse Binme Uzaklığında", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f68c.svg"}, // bus 🚌
+  {en:"East wing", tr:"Doğu Kanadı", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/27a1.svg"}, // right arrow ➡️
+  {en:"West wing", tr:"Batı Kanadı", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b05.svg"}, // left arrow ⬅️
+  {en:"Monument", tr:"Anıt", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f5ff.svg"},        // moai 🗿
+  {en:"Special", tr:"Özel", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/2b50.svg"},          // star ⭐
+  {en:"Another guest", tr:"Başka Misafir", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f465.svg"}, // busts in silhouette 👥
+  {en:"Imagine", tr:"Hayal Et", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4ad.svg"},     // thought balloon 💭
+  {en:"A cave", tr:"Mağara", img:"https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f573.svg"}         // hole 🕳️
 ],
 
 
@@ -381,5 +456,3 @@ newGame();
 </script>
 </body>
 </html>
-
-
